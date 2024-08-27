@@ -1,5 +1,5 @@
 export class Aluno {
-    id: number
+    id: string
     nome: string
     aprovado: boolean
 }

@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { AlunoService } from './aluno.service';
 import { CreateAlunoDto } from './dto/create-aluno.dto';
@@ -18,6 +19,8 @@ export class AlunoController {
 
   @Post()
   async create(@Body() createAlunoDto: CreateAlunoDto) {
+    if (await this.alunoService.findByName(createAlunoDto.nome))
+      throw new BadRequestException('Já existe um aluno com esse nome');
     return { message: await this.alunoService.create(createAlunoDto) };
   }
 
@@ -28,7 +31,7 @@ export class AlunoController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const aluno = await this.alunoService.findOne(+id);
+    const aluno = await this.alunoService.findOne(id);
     if (!aluno) throw new NotFoundException('Aluno não encontrado');
     return aluno;
   }
@@ -38,19 +41,19 @@ export class AlunoController {
     @Param('id') id: string,
     @Body() updateAlunoDto: UpdateAlunoDto,
   ) {
-    const aluno = await this.alunoService.findOne(+id);
+    const aluno = await this.alunoService.findOne(id);
     if (!aluno) throw new NotFoundException('Aluno não encontrado');
     if ('id' in updateAlunoDto) {
       const { id, ...data } = updateAlunoDto;
       updateAlunoDto = data;
     }
-    return { message: await this.alunoService.update(+id, updateAlunoDto) };
+    return { message: await this.alunoService.update(id, updateAlunoDto) };
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    const aluno = await this.alunoService.findOne(+id);
+    const aluno = await this.alunoService.findOne(id);
     if (!aluno) throw new NotFoundException('Aluno não encontrado');
-    return { message: await this.alunoService.remove(+id) };
+    return { message: await this.alunoService.remove(id) };
   }
 }

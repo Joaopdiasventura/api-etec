@@ -15,16 +15,20 @@ export class AlunoService {
     return await this.prisma.aluno.findMany();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return await this.prisma.aluno.findUnique({ where: { id } });
   }
 
-  async update(id: number, updateAlunoDto: UpdateAlunoDto) {
+  async findByName(nome: string) {
+    return await this.prisma.aluno.findFirst({ where: { nome } });
+  }
+
+  async update(id: string, updateAlunoDto: UpdateAlunoDto) {
     await this.prisma.aluno.update({ where: { id }, data: updateAlunoDto });
     return 'Aluno atualizado com sucesso';
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     await this.prisma.aluno.delete({ where: { id } });
     return 'Aluno deletado com sucesso';
   }
